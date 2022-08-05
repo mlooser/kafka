@@ -20,12 +20,32 @@ public class ProducerDemo {
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
-        KafkaProducer<String,String> producer = new KafkaProducer<>(properties);
+        KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
 
-        ProducerRecord<String,String> record =
-                new ProducerRecord<>("demo_java","Hello World");
+        for (int i = 0; i < 10; ++i) {
+            String key = "key_" + (i % 3);
+            String message = "message_" + i;
 
-        producer.send(record);
+            ProducerRecord<String, String> record =
+                    new ProducerRecord<>("demo_java",key, message);
+
+            producer.send(record,(metadata, exception) -> {
+                if(exception == null){
+                   log.info(
+                           "Key: " + record.key() + "\n"
+                           + "Partition: " + metadata.partition() + "\n"
+                           + "Offset: " + metadata.offset()
+                   );
+                }
+                else{
+                    log.error("Exception while sending record.",exception);
+                }
+            });
+        }
+
+
+
+
 
         producer.flush();
         producer.close();
