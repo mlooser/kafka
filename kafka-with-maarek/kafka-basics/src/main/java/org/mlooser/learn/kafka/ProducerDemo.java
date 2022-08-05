@@ -32,9 +32,9 @@ public class ProducerDemo {
             producer.send(record,(metadata, exception) -> {
                 if(exception == null){
                    log.info(
-                           "Key: " + record.key() + "\n"
-                           + "Partition: " + metadata.partition() + "\n"
-                           + "Offset: " + metadata.offset()
+                           "Key: " + record.key()
+                           + " Partition: " + metadata.partition()
+                           + " Offset: " + metadata.offset()
                    );
                 }
                 else{
